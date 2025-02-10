@@ -1,0 +1,29 @@
+.signup-background {
+    background-image: url('../../../assets/background.jpg'); /* Path to your image */
+    background-size: cover; /* Ensures the image covers the entire background */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    min-height: 100vh; /* Ensures the background covers the full viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .signup-background {
+    position: relative;
+  }
+  
+  .signup-background::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.45); /* White overlay with 80% opacity */
+    z-index: 1;
+  }
+  
+  .signup-background > div {
+    position: relative;
+    z-index: 2; /* Ensure the form is above the overlay */
+  }
