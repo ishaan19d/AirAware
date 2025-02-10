@@ -32,7 +32,7 @@ public class JwtConfig {
 		return http
 			.csrf(customizer -> customizer.disable())
 			.authorizeHttpRequests(request -> request
-			.requestMatchers("/register-admin", "/login-admin", "/register-user", "/login-user")
+			.requestMatchers("/register-admin", "/login-admin", "/register-user", "/login-user", "/send-otp", "/verify-otp")
 			.permitAll()
 			.anyRequest().authenticated())
 			.httpBasic(httpBasic -> httpBasic.disable())
