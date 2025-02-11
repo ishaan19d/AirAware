@@ -1,6 +1,6 @@
 import axios from "axios";
 
-function Step3Register({ name, setName, password, setPassword, phoneNumber, setPhoneNumber, email, setError }) {
+function Step3Register({ name, setName, password, setPassword, phoneNumber, setPhoneNumber, email, setError, navigate }) {
   const registerUser = async () => {
     try {
       const response = await axios.post("http://localhost:8080/register-user", {
@@ -12,6 +12,7 @@ function Step3Register({ name, setName, password, setPassword, phoneNumber, setP
       if (response.data.token) {
         localStorage.setItem("authToken", response.data.token);
         alert("Registration successful!");
+        navigate("/dashboard"); // Redirect to dashboard
       }
     } catch (err) {
       setError("Registration failed. Please try again.");

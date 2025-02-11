@@ -1,15 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../common/Navbar/Navbar"; 
-import "./login.css"; // Import the CSS file
+import Navbar from "../../common/Navbar/Navbar";
+import "./login.css";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,13 +24,15 @@ function Login() {
 
       if (response.data.token) {
         localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("username", username); // Store username
+        
         alert("Login successful!");
-        // Redirect user to a different page after login if needed
-        // navigate("/dashboard"); // Example: Redirect to dashboard
+        navigate("/dashboard"); // Redirect to dashboard
       } else {
         setError("Invalid login credentials");
       }
     } catch (err) {
+      console.log(err);
       setError("Login failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -39,7 +41,7 @@ function Login() {
 
   return (
     <div className="login-background">
-      <Navbar/>
+      <Navbar />
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Welcome Back</h2>
         <p className="text-sm text-gray-600 text-center mb-6">
@@ -108,7 +110,7 @@ function Login() {
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}
             <button
-              onClick={() => navigate("/signup")} // Redirect to signup page
+              onClick={() => navigate("/signup")}
               className="text-blue-600 hover:underline focus:outline-none"
             >
               Sign up

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Step1Email from "./Step1Email";
 import Step2OTP from "./Step2OTP";
 import Step3Register from "./Step3Register";
@@ -14,13 +15,14 @@ function Signup() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Steps for the progress bar
   const steps = ["Email", "OTP", "Register"];
 
   return (
     <div className="signup-background">
-        <Navbar/>
+      <Navbar />
       <div className="bg-white bg-opacity-90 p-6 rounded-lg shadow-lg w-96 mt-16">
         {/* Progress Bar */}
         <ProgressBar steps={steps} currentStep={step} />
@@ -39,6 +41,7 @@ function Signup() {
 
         {step === 2 && (
           <Step2OTP
+            email={email}
             otp={otp}
             setOtp={setOtp}
             setStep={setStep}
@@ -56,6 +59,7 @@ function Signup() {
             setPhoneNumber={setPhoneNumber}
             email={email}
             setError={setError}
+            navigate={navigate} // Pass navigate to Step3Register
           />
         )}
       </div>
