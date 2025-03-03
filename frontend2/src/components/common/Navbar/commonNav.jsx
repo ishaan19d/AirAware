@@ -8,14 +8,7 @@ function Navbar() {
         <Link to="/dashboard" className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-all pr-5">
           AirAware
         </Link>
-        
-        {/* Select Plan Button - Rightmost Corner */}
-        <Link to="/payment" className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all">
-          Select Plan
-        </Link>
-      </div>
+        </div>
     </nav>
   );
-}
-
-export default Navbar;
+}  
