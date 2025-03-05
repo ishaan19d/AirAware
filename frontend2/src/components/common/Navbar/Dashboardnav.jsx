@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-
 function Navbar() {
   return (
     <nav className="navbar fixed w-full top-0 z-50">
@@ -8,7 +7,7 @@ function Navbar() {
         {/* App Name - Leftmost Corner */}
         <Link to="/" className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-all pr-5">
           AirAware
-        </Link>    
+        </Link>
       </div>
     </nav>
   );
