@@ -8,9 +8,7 @@ function Navbar() {
         <Link to="/dashboard" className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-all pr-5">
           AirAware
         </Link>
-      </div>
+        </div>
     </nav>
   );
-}
-
-export default Navbar;
+}  
