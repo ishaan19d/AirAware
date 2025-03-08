@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './LandingPage.css';
-import logo from '../../assets/logo.png';
+import LandingNav from '../../components/common/Navbar/landinNav'; // Import LandingNav component
 import instagramLogo from '../../assets/instagram.jpg';
 import linkedinLogo from '../../assets/linkedin.png';
 import facebookLogo from '../../assets/facebook.jpg';
@@ -60,24 +60,7 @@ function LandingPage() {
 
   return (
     <div className="landing-page">
-      <nav className="navbar">
-        <div className="navbar-container">
-          <div className="logo-name">
-            <img src={logo} alt="AirAware Logo" className="logo" />
-            <Link to="/" className="text-2xl font-bold text-white hover:text-blue-100 transition-all">
-              AirAware
-            </Link>
-          </div>
-          <div className="nav-links">
-            <a href="#home" className="nav-link">Home</a>
-            <a href="#about-us" className="nav-link">About Us</a>
-            <a href="#subscriptions" className="nav-link">Subscriptions</a>
-            <a href="#contact-us" className="nav-link">Contact Us</a>
-            <Link to="/login" className="nav-link">Login/Signup</Link>
-          </div>
-        </div>
-      </nav>
-
+      <LandingNav /> {/* Use LandingNav component */}
       <section id="home" className="home-section">
         <div className="home-content">
           <h1>Breathe Smarter, Live Healthier</h1>
@@ -111,7 +94,6 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Rest of the component remains the same */}
       <section id="slider" className="section slider-section">
         <h2>Our Key Features</h2>
         <div className="slider-container">
@@ -143,7 +125,6 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Subscription and Contact sections remain the same */}
       <section id="subscriptions" className="section subscriptions-section">
         <h2>Subscription Plans</h2>
         

@@ -25,7 +25,7 @@ function Step3Register({
       // Check if the response status is 201 (Created)
       if (response.status === 201 || response.status === 200) {
         alert("Registration successful!");
-        navigate("/dashboard"); // Redirect to the dashboard
+        navigate("/free-dashboard"); // Redirect to the dashboard
       } else {
         setError("Registration failed. Please try again.");
       }

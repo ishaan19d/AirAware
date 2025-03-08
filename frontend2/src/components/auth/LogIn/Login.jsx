@@ -27,7 +27,7 @@ function Login() {
         localStorage.setItem("username", username); // Store username
         
         alert("Login successful!");
-        navigate("/dashboard"); // Redirect to dashboard
+        navigate("/free-dashboard"); // Redirect to dashboard
       } else {
         setError("Invalid login credentials");
       }
