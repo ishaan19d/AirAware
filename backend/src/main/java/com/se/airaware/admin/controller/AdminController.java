@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.se.airaware.admin.Admin;
@@ -16,6 +17,7 @@ import com.se.airaware.payload.response.ErrorResponse;
 import jakarta.validation.Valid;
 
 @RestController
+@RequestMapping("/api")
 public class AdminController {
 	private AdminService adminService;
 
