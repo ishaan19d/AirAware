@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 
-import "./payment.css";
-
 const plans = [
   {
     type: "Free",
@@ -13,8 +11,8 @@ const plans = [
   },
   {
     type: "Prime",
-    price: "₹ 500/month",
-    features: ["Dedicated account manager", "Custom integrations", "Advanced analytics"],
+    price: "₹ 50/month",
+    features: ["Dedicated account manager", "Custom integrations", , "Advanced analytics"],
     tier: 2
   }
 ];
@@ -23,30 +21,31 @@ const Subscription = () => {
   const [currentPlan, setCurrentPlan] = useState(null);
   const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const accessToken = Cookies.get('accessToken');
+//   useEffect(() => {
+//     const fetchUserData = async () => {
+//       try {
+//         const accessToken = Cookies.get('accessToken');
 
-        if (accessToken) {
-          const response = await axios.get("http://localhost:8000/accounts/me/", {
-            headers: {
-              Authorization: `Bearer ${accessToken}`
-            }
-          });
-          const fetchedUserData = response.data;
-          setUserData(fetchedUserData);
-          setCurrentPlan(parseInt(fetchedUserData.tier, 10));
-        } else {
-          setUserData(null);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+//         if (accessToken) {
+//           const response = await axios.get("http://localhost:8000/accounts/me/", {
+//             headers: {
+//               Authorization: `Bearer ${accessToken}`
+//             }
+//           });
+//           const fetchedUserData = response.data;
+//           setUserData(fetchedUserData);
+//           setCurrentPlan(parseInt(fetchedUserData.tier, 10));
+//         } else {
+//           setUserData(null); // Ensure userData is null if no token
+//         }
+//       } catch (error) {
+//         console.error("Error fetching user data:", error);
+//         // Handle error, possibly show a message to the user
+//       }
+//     };
 
-    fetchUserData();
-  }, []);
+//     fetchUserData();
+//   }, []);
 
   const handlePayment = async (tier) => {
     if (tier === 1) {
@@ -77,15 +76,15 @@ const Subscription = () => {
         key: data.key,
         amount: data.amount,
         currency: "INR",
-        name: "SalesSage",
+        name: "AIRAWARE",
         description: `Tier ${tier}`,
-        image: "https://example.com/your_logo",
+        image: "",
         order_id: data.order_id,
         callback_url: "",
         prefill: {
-          name: "Harsh Choudhary",
-          email: "harsh@gmail.com",
-          contact: "9000090000"
+          name: "Manya Maheshwari",
+          email: "maheshwarimanya7@gmail.com",
+          contact: "9528569142"
         },
         notes: {
           address: "Razorpay Corporate Office"
@@ -104,43 +103,34 @@ const Subscription = () => {
 
   const getButtonText = (tier) => {
     if (!userData) return 'Buy Now';
+
     if (currentPlan === null) return 'Loading...';
+
     if (tier > currentPlan) return 'Upgrade';
     if (tier < currentPlan) return 'Downgrade';
     return 'Current Plan';
   };
 
   return (
-    <div className="subscription-background" style={{ 
-      backgroundImage: "url('src/assets/background.jpg')", 
-      backgroundSize: "cover", 
-      backgroundPosition: "center", 
-      backgroundRepeat: "no-repeat", 
-      minHeight: "100vh", 
-      display: "flex", 
-      alignItems: "center", 
-      justifyContent: "center", 
-      position: "relative" 
-    }}>
-      {/* Dark overlay for better readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-      
-      <div className="max-w-6xl mx-auto p-8 relative z-10">
+    <div className="bg-gradient-to-r from-color-300 via-color-400 to-color-500 min-h-screen p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
         <div className="flex items-center mb-8 md:mb-12">
-          <h1 className="text-black text-3xl md:text-5xl font-bold mx-auto">Subscription Plans</h1>
+          <h1 className="text-white text-3xl md:text-5xl font-bold mx-auto">Subscription Plans</h1>
         </div>
+        
+       
+        
         <div className="flex flex-col md:flex-row justify-between space-y-8 md:space-y-0 md:space-x-8">
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`group w-full md:w-1/3 rounded-3xl p-0.5 relative overflow-hidden shadow-xl transition duration-300 ${
-                index === 0 ? 'border-t-4 border-r-2 border-b-1 border-opacity-80 border-blue-400' :
-                index === 1 ? 'border-l-4 border-r-2 border-b-1 border-opacity-80 border-purple-500' : ''
+              className={`group w-full md:w-1/3 bg-gradient-to-b from-gray-800/20 to-transparent rounded-3xl p-0.5 relative overflow-hidden shadow-md hover:shadow-xl transition duration-300 ${
+                index === 0 ? 'border-t-8 border-r-4 border-b-2 border-opacity-80 border-white' :
+                index === 1 ? 'border-l-8 border-r-4 border-b-2 border-opacity-80 border-white' :
+                index === 2 ? 'border-l-2 border-t-4 border-b-8 border-opacity-80 border-white' : ''
               }`}
             >
-              {/* Card background with better opacity for readability */}
-              <div className="bg-gray-900 bg-opacity-80 h-full rounded-3xl flex flex-col justify-between group-hover:bg-opacity-90 transition-all duration-300">
-                {/* Glow effect for premium tier */}
+              <div className="bg-gradient-to-b from-gray-900/50 to-transparent h-full rounded-3xl flex flex-col justify-between group-hover:border-opacity-100 group-hover:border-white">
                 {index === 1 && (
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full opacity-20 blur-3xl"></div>
                 )}
@@ -169,9 +159,8 @@ const Subscription = () => {
                     ))}
                   </ul>
                   <button
-                    className={`mt-8 font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105 ${
-                      !userData ? 'bg-blue-500 hover:bg-blue-600 text-white' : 
-                      (currentPlan === plan.tier ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-blue-500 hover:bg-blue-600 text-white')
+                    className={`mt-8 bg-color-300 hover:bg-white hover:text-color-300 text-white font-bold py-2 px-4 rounded-full transition duration-300 group-hover:scale-105 ${
+                      !userData ? 'bg-blue-500 hover:bg-blue-600' : (currentPlan === plan.tier ? 'bg-green-500 hover:bg-green-600' : '')
                     }`}
                     onClick={() => handlePayment(plan.tier)}
                     disabled={!userData || currentPlan === plan.tier}

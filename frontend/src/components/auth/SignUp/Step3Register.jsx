@@ -13,7 +13,7 @@ function Step3Register({
 }) {
   const registerUser = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/register-user", {
+      const response = await axios.post("http://localhost/api/register-user", {
         email,
         name,
         password,

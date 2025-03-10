@@ -6,7 +6,7 @@ function Step1Email({ email, setEmail, setStep, setError }) {
 
   const sendOtp = async () => {
     try {
-      await axios.post("http://localhost:8080/send-otp", { email });
+      await axios.post("http://localhost/api/send-otp", { email });
       setStep(2); // Move to Step 2
     } catch (err) {
       setError("Failed to send OTP. Please try again.");

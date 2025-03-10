@@ -404,3 +404,114 @@
         text-align: left;
     }
 }
+/* Add this to your existing CSS file */
+
+.health-activities-box {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    height: 100%;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.health-activities-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.health-activities-header {
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.health-activities-header h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #333;
+    font-weight: 600;
+}
+
+.health-activities-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.health-icon {
+    background-color: #f8f9fa;
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+    color: #4285f4;
+    font-size: 24px;
+}
+
+.health-details {
+    flex: 1;
+}
+
+.health-details h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+}
+
+.health-details p {
+    margin: 0 0 15px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.health-recommendations {
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.health-recommendations li {
+    margin-bottom: 8px;
+    color: #666;
+}
+
+.pollutant-link {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #4285f4;
+    font-weight: 600;
+    padding: 0;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.pollutant-link svg {
+    margin-left: 8px;
+    transition: transform 0.3s;
+}
+
+.pollutant-link:hover {
+    color: #3367d6;
+}
+
+.pollutant-link:hover svg {
+    transform: translateX(3px);
+}
+
+/* Media query adjustments */
+@media (max-width: 768px) {
+    .health-activities-content {
+        flex-direction: column;
+    }
+    
+    .health-icon {
+        margin-bottom: 15px;
+    }
+}
