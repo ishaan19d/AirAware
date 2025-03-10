@@ -34,7 +34,7 @@ public class JwtConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(customizer -> customizer.disable())
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/api/register-admin", "/api/login-admin", "/api/register-user", "/api/login-user", "/api/send-otp", "/api/verify-otp")
