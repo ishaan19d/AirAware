@@ -104,6 +104,23 @@ public class UserController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 	    }
 	}
+	
+    @PostMapping("/mark-premium")
+    public ResponseEntity<?> markUserAsPremium(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            userService.markUserAsPremium(email);
+            return ResponseEntity.ok(Map.of("message", "User marked as premium successfully"));
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+	
+	
 
 }
 

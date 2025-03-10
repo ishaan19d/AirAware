@@ -54,6 +54,16 @@ public class UserService {
     	}
     	return null;
     }
+    
+    public void markUserAsPremium(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            user.setPremiumUser(true);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("User not found with email: " + email);
+        }
+    }
 	
 }
 

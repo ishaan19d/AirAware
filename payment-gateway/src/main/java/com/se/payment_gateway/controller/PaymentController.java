@@ -28,6 +28,7 @@ public class PaymentController {
     @PostMapping("/create-order")
     public String createOrder(@RequestParam("amount") int amount) {
         try {
+            System.out.println("Amount=--------- "+amount);
             return razorpayService.createOrder(amount);
         } catch (Exception e) {
             return "Error: " + e.getMessage();
@@ -60,7 +61,7 @@ public class PaymentController {
     }
     
     public void markUserAsPremium(String jwtToken) {
-        String userServiceUrl = "http://localhost:8080/mark-premium";
+        String userServiceUrl = "http://localhost/api/mark-premium";
         
         try {
             HttpClient client = HttpClient.newHttpClient();
