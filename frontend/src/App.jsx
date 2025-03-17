@@ -5,8 +5,8 @@ import Login from "./components/auth/LogIn/Login";
 import Signup from "./components/auth/SignUp/SignUp";
 import Payment from "./pages/PaymentGateway/payment";
 import FreeUserDashboard from "./pages/FreeUserDashboard/FreeUserDashboard"; 
-// import PremiumUserDashboard from "./pages/PremiumUserDashboard/PremiumUserDashboard";
-// import PollutantDashboard from './pages/PollutantDashboard/PollutantDashboard';
+import PremiumUserDashboard from "./pages/PremiumUserDashboard/PremiumUserDashboard";
+import PollutantDashboard from './pages/PollutantDashboard/PollutantDashboard';
 
 function App() {
   return (
@@ -17,8 +17,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/free-dashboard" element={<FreeUserDashboard />} />
-        {/* <Route path="/premium-dashboard" element={<PremiumUserDashboard />} />
-        <Route path="/pollutant-dashboard" element={<PollutantDashboard />} /> */}
+        <Route path="/premium-dashboard" element={<PremiumUserDashboard />} />
+        {/* <Route path="/pollutant-dashboard" element={<PollutantDashboard />} /> */}
       </Routes>
     </Router>
   );

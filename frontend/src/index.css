@@ -1,1 +1,47 @@
 @import "tailwindcss";
+/* Default styles for larger screens */
+body {
+    font-size: 28px;
+    /* padding: 10px; */
+  }
+  
+  /* Styles for screens 1440px and below */
+  @media (max-width: 1440px) {
+    body {
+      font-size: 15px;
+      /* padding: 18px; */
+    }
+  }
+  
+  /* Styles for screens 1220px and below */
+  @media (max-width: 1220px) {
+    body {
+      font-size: 14px;
+      /* padding: 16px; */
+    }
+  }
+  
+  /* Styles for screens 992px and below */
+  @media (max-width: 992px) {
+    body {
+      font-size: 13px;
+      /* padding: 14px; */
+    }
+  }
+  
+  /* Styles for screens 768px and below */
+  @media (max-width: 768px) {
+    body {
+      font-size: 12px;
+      /* padding: 12px; */
+    }
+  }
+  
+  /* Styles for screens 600px and below */
+  @media (max-width: 600px) {
+    body {
+      font-size: 11px;
+      /* padding: 10px; */
+    }
+  }
+  
