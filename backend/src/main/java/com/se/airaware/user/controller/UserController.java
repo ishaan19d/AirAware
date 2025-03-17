@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -105,7 +106,7 @@ public class UserController {
 	    }
 	}
 	
-    @PostMapping("/mark-premium")
+    @PatchMapping("/mark-premium")
     public ResponseEntity<?> markUserAsPremium(@RequestBody Map<String, String> request) {
         try {
             String email = request.get("email");
@@ -119,8 +120,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
-	
-	
-
 }
-

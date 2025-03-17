@@ -40,13 +40,13 @@ public class PaymentController {
             @RequestParam("orderId") String orderId,
             @RequestParam("paymentId") String paymentId,
             @RequestParam("signature") String signature,
-            @RequestHeader("Authorization") String jwtToken // Extract JWT token from the header
+            @RequestHeader("Authorization") String jwtToken
     ) {
         boolean isValid = razorpayService.verifyPayment(orderId, paymentId, signature);
 
         if (isValid) {
             try {
-                markUserAsPremium(jwtToken); // Pass the JWT token to mark the user as premium
+                markUserAsPremium(jwtToken);
                 return ResponseEntity.ok("Payment Verified and User Marked as Premium");
             } catch (Exception e) {
             	System.out.println("Inside catch ----------------");
