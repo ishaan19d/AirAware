@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.se.payment_gateway.kafka.service.PaymentEventProducer;
 import com.se.payment_gateway.service.RazorpayService;
 
 @RestController
@@ -20,9 +21,11 @@ import com.se.payment_gateway.service.RazorpayService;
 public class PaymentController {
 
     private final RazorpayService razorpayService;
+    private final PaymentEventProducer paymentEventProducer;
 
-    public PaymentController(RazorpayService razorpayService) {
+    public PaymentController(RazorpayService razorpayService, PaymentEventProducer paymentEventProducer) {
         this.razorpayService = razorpayService;
+        this.paymentEventProducer = paymentEventProducer;
     }
 
     @PostMapping("/create-order")
@@ -46,43 +49,18 @@ public class PaymentController {
 
         if (isValid) {
             try {
-                markUserAsPremium(jwtToken);
-                return ResponseEntity.ok("Payment Verified and User Marked as Premium");
+                paymentEventProducer.sendPaymentVerificationEvent(jwtToken);
+                
+                return ResponseEntity.ok("Payment Verified and Premium Request Submitted");
             } catch (Exception e) {
-            	System.out.println("Inside catch ----------------");
-            	System.out.println("Error : "+e.getMessage());
+                System.out.println("Inside catch ----------------");
+                System.out.println("Error : "+e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Failed to mark user as premium: " + e.getMessage());
+                        .body("Failed to process premium request: " + e.getMessage());
             }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Payment Verification Failed");
-        }
-    }
-    
-    public void markUserAsPremium(String jwtToken) {
-        String userServiceUrl = "http://localhost/api/mark-premium";
-        
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(userServiceUrl))
-                .method("PATCH", HttpRequest.BodyPublishers.ofString("{}"))
-                .header("Authorization", jwtToken)
-                .header("Content-Type", "application/json")
-                .build();
-                
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            
-            if (response.statusCode() == 200) {
-                System.out.println("User marked as premium successfully!");
-            } else {
-                System.out.println("Failed to mark user as premium. Response code: " + response.statusCode());
-                System.out.println("Response body: " + response.body());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Error marking user as premium: " + e.getMessage());
         }
     }
 }
