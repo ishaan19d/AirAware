@@ -37,7 +37,7 @@ public class JwtConfig {
 //            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(customizer -> customizer.disable())
             .authorizeHttpRequests(request -> request
-                .requestMatchers("/api/register-admin", "/api/login-admin", "/api/register-user", "/api/login-user", "/api/send-otp", "/api/verify-otp")
+                .requestMatchers("/api/register-admin", "/api/login-admin", "/api/register-user", "/api/login-user", "/api/send-otp", "/api/verify-otp","/api/mark-premium")
                 .permitAll()
                 .anyRequest().authenticated())
             .httpBasic(httpBasic -> httpBasic.disable())
