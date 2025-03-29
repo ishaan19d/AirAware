@@ -1,10 +1,10 @@
-package com.example.airQuality;
+package com.se.air_data;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AirQualityApplicationTests {
+class AirDataApplicationTests {
 
 	@Test
 	void contextLoads() {

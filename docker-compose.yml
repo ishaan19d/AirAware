@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   nginx:
@@ -11,58 +11,147 @@ services:
       - payment-gateway
     networks:
       - app-network
+    restart: unless-stopped
 
   backend:
     build:  
       context: ./backend
-    expose:
-      - "8081"
+      # Use a dedicated development Dockerfile if you have one
+      # dockerfile: Dockerfile.dev
+    ports:
+      - "8081:8081"
     environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     networks:
       - app-network
+    restart: unless-stopped
+    # Optional: Mount these volumes for development to avoid rebuilding for code changes
+    # volumes:
+    #   - ./backend/build/libs:/app
+    #   - ./backend/.env:/app/.env
 
   payment-gateway:
     build:
       context: ./payment-gateway
-    expose:
-      - "8082"
+      # Use a dedicated development Dockerfile if you have one
+      # dockerfile: Dockerfile.dev
+    ports:
+      - "8082:8082"
     environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS=kafka:9092
       - SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     networks:
       - app-network
+    restart: unless-stopped
+    # Optional: Mount these volumes for development to avoid rebuilding for code changes
+    # volumes:
+    #   - ./payment-gateway/build/libs:/app
+    #   - ./payment-gateway/.env:/app/.env
+
+  air-data:
+    build:
+      context: ./air-data
+      # Use a dedicated development Dockerfile if you have one
+      # dockerfile: Dockerfile.dev
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+    # Optional: Mount these volumes for development to avoid rebuilding for code changes
+    # volumes:
+    #   - ./air-data/build/libs:/app
+    #   - ./air-data/.env:/app/.env
 
   zookeeper:
-    image: bitnami/zookeeper:latest
-    platform: linux/arm64
+    image: confluentinc/cp-zookeeper:latest
     ports:
-      - "2182:2181"  # Changed port mapping to avoid conflict
+      - "22181:2181"
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     networks:
       - app-network
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_logs:/var/lib/zookeeper/log
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   kafka:
-    image: bitnami/kafka:latest
-    platform: linux/arm64
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      zookeeper:
+        condition: service_healthy
     ports:
       - "29092:9092"
+      - "39092:29092"
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-    depends_on:
-      - zookeeper
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:39092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_RETENTION_HOURS: 24
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      # Setting to eliminate the cluster ID issue
+      KAFKA_METADATA_LOG_SEGMENT_BYTES: "104857600"
+      KAFKA_METADATA_MAX_RETENTION_BYTES: "1073741824"
     networks:
       - app-network
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8180:8080"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    networks:
+      - app-network
+    restart: unless-stopped
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  zookeeper_data:
+    name: zookeeper_data
+  zookeeper_logs:
+    name: zookeeper_logs
+  kafka_data:
+    name: kafka_data

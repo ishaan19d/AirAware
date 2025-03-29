@@ -1,13 +1,13 @@
-package com.example.airQuality;
+package com.se.air_data;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AirQualityApplication {
+public class AirDataApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AirQualityApplication.class, args);
+		SpringApplication.run(AirDataApplication.class, args);
 	}
 
 }

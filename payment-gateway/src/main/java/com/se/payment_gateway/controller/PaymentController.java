@@ -1,10 +1,5 @@
 package com.se.payment_gateway.controller;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,8 +44,8 @@ public class PaymentController {
 
         if (isValid) {
             try {
-                paymentEventProducer.sendPaymentVerificationEvent(jwtToken);
-                
+                // Pass all Razorpay details along with the JWT token
+                paymentEventProducer.sendPaymentVerificationEvent(jwtToken, orderId, paymentId, signature);
                 return ResponseEntity.ok("Payment Verified and Premium Request Submitted");
             } catch (Exception e) {
                 System.out.println("Inside catch ----------------");
