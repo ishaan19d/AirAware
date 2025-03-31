@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.se.air_data.entity.AirQualityData;
+import com.se.air_data.model.AQIResult;
 import com.se.air_data.service.AirQualityService;
 
 @RestController
@@ -30,6 +31,12 @@ public class AirQualityController {
     @Autowired
     public AirQualityController(AirQualityService airQualityService) {
         this.airQualityService = airQualityService;
+    }
+    
+    
+    @GetMapping("/fetch")
+    public AQIResult getAirQuality(@RequestParam("lat") double lat, @RequestParam("lon") double lon) {
+        return airQualityService.getAirQuality(lat, lon);
     }
     
     @PostMapping("/save")

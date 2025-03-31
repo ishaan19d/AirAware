@@ -5,19 +5,50 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.se.air_data.entity.AirQualityData;
+import com.se.air_data.model.AQIResult;
+import com.se.air_data.model.AirQualityResponse;
+import com.se.air_data.model.Components;
 import com.se.air_data.repository.AirQualityRepository;
 
 @Service
 public class AirQualityService {
     
+	@Autowired
     private final AirQualityRepository airQualityRepository;
     
     @Autowired
-    public AirQualityService(AirQualityRepository airQualityRepository) {
+    private final RestTemplate restTemplate;
+    
+    @Value("${openweather.api.url.air}")
+    private String API_URL;
+
+    @Value("${openweather.api.key}")
+    private String API_KEY;
+    
+    @Autowired
+    public AirQualityService(AirQualityRepository airQualityRepository, RestTemplate restTemplate) {
+    	
         this.airQualityRepository = airQualityRepository;
+        this.restTemplate = restTemplate;
+    }
+    
+    public AQIResult getAirQuality(double lat, double lon) {
+        String url = String.format("%s?lat=%f&lon=%f&appid=%s", API_URL, lat, lon, API_KEY);
+        AirQualityResponse response = restTemplate.getForObject(url, AirQualityResponse.class);
+        
+        if (response == null || response.getList().isEmpty()) {
+            throw new RuntimeException("Failed to fetch air quality data.");
+        }
+
+        Components components = response.getList().get(0).getComponents();
+        int aqi = AQICalculator.calculateAQI(components);
+
+        return new AQIResult(components, aqi);
     }
     
     // Save new air quality data
