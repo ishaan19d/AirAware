@@ -73,17 +73,28 @@ public class AirQualityController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
-    // Get air quality data by city
-    @GetMapping("/city/{city}")
-    public ResponseEntity<List<AirQualityData>> getAirQualityDataByCity(@PathVariable("city") String city) {
-        List<AirQualityData> dataList = airQualityService.getAirQualityDataByCity(city);
-        return new ResponseEntity<>(dataList, HttpStatus.OK);
-    }
-    
-    // Get air quality data by state
-    @GetMapping("/state/{state}")
-    public ResponseEntity<List<AirQualityData>> getAirQualityDataByState(@PathVariable("state") String state) {
-        List<AirQualityData> dataList = airQualityService.getAirQualityDataByState(state);
+    @GetMapping("/location")
+    public ResponseEntity<List<AirQualityData>> getAirQualityDataByLocation(
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "state", required = false) String state) {
+        
+        List<AirQualityData> dataList;
+        
+        // Check which parameters were provided
+        if (city != null && state != null) {
+            // Both city and state provided
+            dataList = airQualityService.getAirQualityDataByCityAndState(city, state);
+        } else if (city != null) {
+            // Only city provided
+            dataList = airQualityService.getAirQualityDataByCity(city);
+        } else if (state != null) {
+            // Only state provided
+            dataList = airQualityService.getAirQualityDataByState(state);
+        } else {
+            // Neither city nor state provided - return bad request
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        
         return new ResponseEntity<>(dataList, HttpStatus.OK);
     }
     
