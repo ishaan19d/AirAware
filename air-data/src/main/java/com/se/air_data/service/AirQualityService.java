@@ -146,4 +146,9 @@ public class AirQualityService {
     public void deleteAirQualityData(String id) {
         airQualityRepository.deleteById(id);
     }
+    
+    // Get Unique Locations
+    public List<AirQualityData.Location> getAllUniqueLocations() {
+        return airQualityRepository.findDistinctLocations();
+    }
 }

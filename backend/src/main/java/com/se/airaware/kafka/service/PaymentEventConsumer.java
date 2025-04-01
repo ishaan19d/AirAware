@@ -53,7 +53,7 @@ public class PaymentEventConsumer {
                 // Prepare payload to send back to payment gateway
                 Map<String, String> confirmationPayload = new HashMap<>();
                 confirmationPayload.put("email", email);
-                confirmationPayload.put("amount", "49900"); // Amount in paise (499 INR)
+                confirmationPayload.put("amount", "150000"); // Amount in paise (499 INR)
                 
                 // Include Razorpay details in the confirmation
                 if (orderId != null) confirmationPayload.put("orderId", orderId);

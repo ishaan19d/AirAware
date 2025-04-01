@@ -3,6 +3,7 @@ package com.se.air_data.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -61,4 +62,10 @@ public interface AirQualityRepository extends MongoRepository<AirQualityData, St
     @Query(value = "{ 'aqi': { $gt: ?0 } }", 
            fields = "{ 'location.city': 1, 'location.state': 1, '_id': 0 }")
     List<AirQualityData> findCitiesWithAqiAbove(int threshold);
+    
+    @Aggregation(pipeline = {
+            "{ $group: { _id: { city: '$location.city', state: '$location.state' } } }",
+            "{ $project: { _id: 0, city: '$_id.city', state: '$_id.state' } }"
+        })
+    List<AirQualityData.Location> findDistinctLocations();
 }

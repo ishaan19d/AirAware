@@ -168,4 +168,9 @@ public class AirQualityController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/get-unique")
+    public List<?> getUnique() {
+        return airQualityService.getAllUniqueLocations();
+    }
 }

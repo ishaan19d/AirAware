@@ -9,6 +9,8 @@ services:
     depends_on:
       - backend
       - payment-gateway
+      - air-data
+      - scheduler
     networks:
       - app-network
     restart: unless-stopped
@@ -78,6 +80,31 @@ services:
     # volumes:
     #   - ./air-data/build/libs:/app
     #   - ./air-data/.env:/app/.env
+
+  scheduler:
+    build:
+      context: ./scheduler
+      # Use a dedicated development Dockerfile if you have one
+      # dockerfile: Dockerfile.dev
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS=kafka:9092
+      - SERVER_PORT=8084
+    depends_on:
+      kafka:
+        condition: service_healthy
+      air-data:
+        condition: service_started
+    networks:
+      - app-network
+    restart: unless-stopped
+    # Optional: Mount these volumes for development to avoid rebuilding for code changes
+    # volumes:
+    #   - ./scheduler/build/libs:/app
+    #   - ./scheduler/.env:/app/.env
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
