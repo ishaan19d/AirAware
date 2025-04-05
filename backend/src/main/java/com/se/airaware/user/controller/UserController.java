@@ -1,19 +1,21 @@
 package com.se.airaware.user.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.se.airaware.dto.AuthRequest;
 import com.se.airaware.dto.AuthResponse;
+import com.se.airaware.jwt.JwtService;
 import com.se.airaware.payload.response.ErrorResponse;
 import com.se.airaware.scheduler.email.service.EmailService;
 import com.se.airaware.scheduler.otp.service.OTPService;
@@ -29,12 +31,14 @@ public class UserController {
 	private UserService userService;
 	private OTPService otpService;
 	private EmailService emailService;
+	private JwtService jwtService;
 
-	public UserController(UserService userService, OTPService otpService, EmailService emailService) {
+	public UserController(UserService userService, OTPService otpService, EmailService emailService, JwtService jwtService) {
 		super();
 		this.userService = userService;
 		this.otpService = otpService;
 		this.emailService = emailService;
+		this.jwtService = jwtService;
 	}
 	
     @PostMapping("/send-otp")
@@ -69,7 +73,13 @@ public class UserController {
     public ResponseEntity<?> registerUser(@RequestBody User user) {
     	try {
     		User registeredUser = userService.register(user);
-    		return ResponseEntity.ok(registeredUser);
+    		
+    		String token = jwtService.generateToken(registeredUser.getEmail());
+  
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
     	} catch (DuplicateKeyException e) {
     		ErrorResponse errorResponse = new ErrorResponse(
     	            HttpStatus.CONFLICT,

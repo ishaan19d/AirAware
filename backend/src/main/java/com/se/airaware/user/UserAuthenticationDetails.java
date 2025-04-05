@@ -21,6 +21,10 @@ public class UserAuthenticationDetails implements UserDetails{
 		return List.of(new SimpleGrantedAuthority("ROLE_USER"));
 	}
 	
+    public User getUser() {
+        return this.user;
+    }
+	
 	@Override
 	public String getUsername() {
 		return user.getEmail();

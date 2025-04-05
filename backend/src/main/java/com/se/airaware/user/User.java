@@ -33,27 +33,70 @@ public class User {
     @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 characters")
     @Indexed(unique = true)
     private String phoneNumber;
+    
+    private Location location;
 
     private List<String> alertPreferences;
     private boolean isPremiumUser;
     private List<String> triggers;
+    
+    public static class Location {
+        @Indexed
+        private String city;
+        
+        @Indexed
+        private String state;
+        
+        public Location() {
+        }
+        
+        public Location(String city, String state) {
+            this.city = city;
+            this.state = state;
+        }
+        
+        public String getCity() {
+            return city;
+        }
+        
+        public void setCity(String city) {
+            this.city = city;
+        }
+        
+        public String getState() {
+            return state;
+        }
+        
+        public void setState(String state) {
+            this.state = state;
+        }
+        
+        @Override
+        public String toString() {
+            return "Location{" +
+                    "city='" + city + '\'' +
+                    ", state='" + state + '\'' +
+                    '}';
+        }
+    }
 	
 	public User() {
 		super();
 	}
 
-	public User(String id, String name, String email, String password, String phoneNumber,
-			List<String> alertPreferences, boolean isPremiumUser, List<String> triggers) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.email = email;
-		this.password = password;
-		this.phoneNumber = phoneNumber;
-		this.alertPreferences = alertPreferences;
-		this.isPremiumUser = isPremiumUser;
-		this.triggers = triggers;
-	}
+    public User(String id, String name, String email, String password, String phoneNumber,
+            Location location, List<String> alertPreferences, boolean isPremiumUser, List<String> triggers) {
+    super();
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.phoneNumber = phoneNumber;
+    this.location = location;
+    this.alertPreferences = alertPreferences;
+    this.isPremiumUser = isPremiumUser;
+    this.triggers = triggers;
+}
 
 	public String getId() {
 		return id;
@@ -94,6 +137,14 @@ public class User {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	
+	public Location getLocation() {
+		return location;
+	}
+	
+	public void setLocation(Location location) {
+		this.location = location;
+	}
 
 	public List<String> getAlertPreferences() {
 		return alertPreferences;
@@ -118,5 +169,13 @@ public class User {
 	public void setTriggers(List<String> triggers) {
 		this.triggers = triggers;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", phoneNumber="
+				+ phoneNumber + ", location=" + location + ", alertPreferences=" + alertPreferences + ", isPremiumUser="
+				+ isPremiumUser + ", triggers=" + triggers + "]";
+	}
+	
 	
 }

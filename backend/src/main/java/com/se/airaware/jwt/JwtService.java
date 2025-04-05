@@ -4,16 +4,20 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.se.airaware.user.User;
+import com.se.airaware.user.repository.UserRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import java.util.function.Function;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
@@ -22,9 +26,19 @@ import io.jsonwebtoken.security.Keys;
 public class JwtService {
 	@Value("${jwt.secretKey}")
     private String secretKey;
+	
+	@Autowired
+	private UserRepository userRepository;
     
 	public String generateToken(String username) {
 		Map<String, Object> claims = new HashMap<>();
+		
+		User user = userRepository.findByEmail(username);
+		claims.put("name", user.getName());
+		claims.put("phoneNumber", user.getPhoneNumber());
+		claims.put("isPremiumUser", user.isPremiumUser());
+		claims.put("location", user.getLocation());
+		
 		return Jwts.builder()
 				.claims()
 				.add(claims)

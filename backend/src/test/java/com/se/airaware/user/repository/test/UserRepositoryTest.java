@@ -46,7 +46,7 @@ class UserRepositoryTest {
 
         userRepository.save(user);
 
-        assertTrue(userRepository.existsByEmail("exists@example.com"));
+        assertTrue(userRepository.existsByEmail("existsx@example.com"));
         assertFalse(userRepository.existsByEmail("notfound@example.com"));
     }
 
