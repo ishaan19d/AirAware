@@ -38,7 +38,7 @@ public class User {
 
     private List<String> alertPreferences;
     private boolean isPremiumUser;
-    private List<String> triggers;
+    private List<String> diseases;
     
     public static class Location {
         @Indexed
@@ -85,7 +85,7 @@ public class User {
 	}
 
     public User(String id, String name, String email, String password, String phoneNumber,
-            Location location, List<String> alertPreferences, boolean isPremiumUser, List<String> triggers) {
+            Location location, List<String> alertPreferences, boolean isPremiumUser, List<String> diseases) {
     super();
     this.id = id;
     this.name = name;
@@ -95,7 +95,7 @@ public class User {
     this.location = location;
     this.alertPreferences = alertPreferences;
     this.isPremiumUser = isPremiumUser;
-    this.triggers = triggers;
+    this.diseases = diseases;
 }
 
 	public String getId() {
@@ -162,20 +162,18 @@ public class User {
 		this.isPremiumUser = isPremiumUser;
 	}
 
-	public List<String> getTriggers() {
-		return triggers;
+	public List<String> getDiseases() {
+		return diseases;
 	}
 
-	public void setTriggers(List<String> triggers) {
-		this.triggers = triggers;
+	public void setDiseases(List<String> diseases) {
+		this.diseases = diseases;
 	}
 
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", phoneNumber="
 				+ phoneNumber + ", location=" + location + ", alertPreferences=" + alertPreferences + ", isPremiumUser="
-				+ isPremiumUser + ", triggers=" + triggers + "]";
+				+ isPremiumUser + ", diseases=" + diseases + "]";
 	}
-	
-	
 }

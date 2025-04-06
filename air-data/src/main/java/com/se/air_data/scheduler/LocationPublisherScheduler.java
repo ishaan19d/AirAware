@@ -27,7 +27,7 @@ public class LocationPublisherScheduler {
      * Scheduled task that runs every hour to publish unique locations to Kafka
      * fixedRate = 3600000 (1 hour in milliseconds)
      */
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 30000)
     public void publishLocationsToKafka() {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         logger.info("Starting scheduled location publishing at {}", timestamp);

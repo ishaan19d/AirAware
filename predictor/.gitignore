@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.so
+
+# Virtualenv
+venv/
+.env
+
+# Django stuff
+*.log
+db.sqlite3
+media/
+staticfiles/
+local_settings.py
+
+# VS Code / IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS stuff
+.DS_Store
+Thumbs.db
+
+# Migration cache
+*/migrations/__pycache__/

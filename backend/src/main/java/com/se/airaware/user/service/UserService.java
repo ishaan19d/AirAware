@@ -1,5 +1,7 @@
 package com.se.airaware.user.service;
 
+import java.util.List;
+
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -63,6 +65,10 @@ public class UserService {
         } else {
             throw new RuntimeException("User not found with email: " + email);
         }
+    }
+    
+    public List<User> getPaidUsersByLocation(String city, String State) {
+    	return userRepository.findByIsPremiumUserTrueAndLocation_CityIgnoreCaseAndLocation_StateIgnoreCase(city, State);
     }
 	
 }

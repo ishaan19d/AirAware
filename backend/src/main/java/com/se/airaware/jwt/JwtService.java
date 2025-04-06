@@ -38,7 +38,7 @@ public class JwtService {
 		claims.put("phoneNumber", user.getPhoneNumber());
 		claims.put("isPremiumUser", user.isPremiumUser());
 		claims.put("location", user.getLocation());
-		
+		claims.put("diseases", user.getDiseases());
 		return Jwts.builder()
 				.claims()
 				.add(claims)

@@ -106,6 +106,19 @@ services:
     #   - ./scheduler/build/libs:/app
     #   - ./scheduler/.env:/app/.env
 
+  predictor:
+    build:
+      context: ./predictor
+    ports:
+      - "8085:8085"
+    env_file:
+      - ./predictor/.env
+    depends_on:
+      - kafka
+    networks:
+      - app-network
+    restart: unless-stopped
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     ports:
