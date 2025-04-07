@@ -11,5 +11,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     boolean existsByPhoneNumber(String phoneNumber);
     
     List<User> findByIsPremiumUserTrueAndLocation_CityIgnoreCaseAndLocation_StateIgnoreCase(String city, String state);
+    List<User> findByIsPremiumUserFalseAndLocation_CityIgnoreCaseAndLocation_StateIgnoreCase(String city, String state);
 
 }

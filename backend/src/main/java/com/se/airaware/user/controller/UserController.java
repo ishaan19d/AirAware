@@ -1,6 +1,8 @@
 package com.se.airaware.user.controller;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.dao.DuplicateKeyException;
@@ -122,6 +124,23 @@ public class UserController {
             String email = request.get("email");
             userService.markUserAsPremium(email);
             return ResponseEntity.ok(Map.of("message", "User marked as premium successfully"));
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PatchMapping("/modify-disease")
+    public ResponseEntity<?> modifyDisease(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+			String[] diseasesArray = request.get("diseases").split(",");
+			List<String> diseases = Arrays.asList(diseasesArray);
+			userService.modifyDiseases(email, diseases);
+            return ResponseEntity.ok(Map.of("message", "Diseases added successfully"));
         } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(
                     HttpStatus.INTERNAL_SERVER_ERROR,

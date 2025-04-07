@@ -71,5 +71,18 @@ public class UserService {
     	return userRepository.findByIsPremiumUserTrueAndLocation_CityIgnoreCaseAndLocation_StateIgnoreCase(city, State);
     }
 	
+	public List<User> getFreeUsersByLocation(String city, String State) {
+    	return userRepository.findByIsPremiumUserFalseAndLocation_CityIgnoreCaseAndLocation_StateIgnoreCase(city, State);
+    }
+
+    public void modifyDiseases(String email, List<String> diseases) {
+        User user = userRepository.findByEmail(email);
+		if (user != null) {
+			user.setDiseases(diseases);
+			userRepository.save(user);
+		} else {
+			throw new RuntimeException("User not found with email: " + email);
+		}
+    }
 }
 

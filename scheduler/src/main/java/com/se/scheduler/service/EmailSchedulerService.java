@@ -54,6 +54,26 @@ public class EmailSchedulerService {
             logger.error("Failed to schedule email for {}: {}", userEmail, e.getMessage(), e);
         }
     }
+
+    @Async
+    public void scheduleFreeUserEmailAlert(String userEmail, List<String> pollutants) {
+        try {
+            String subject = "Air Quality Alert: Unsafe Pollution Levels";
+            String content = buildFreeUserEmailContent(pollutants);
+    
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(senderEmail);
+            message.setTo(userEmail);
+            message.setSubject(subject);
+            message.setText(content);
+    
+            mailSender.send(message);
+    
+            logger.info("Air quality alert email sent to FREE user {}", userEmail);
+        } catch (Exception e) {
+            logger.error("Failed to send air quality alert to FREE user {}: {}", userEmail, e.getMessage(), e);
+        }
+    }
     
     /**
      * Builds the content of the email based on the predicted diseases
@@ -72,4 +92,12 @@ public class EmailSchedulerService {
         
         return builder.toString();
     }
+    
+        private String buildFreeUserEmailContent(List<String> pollutants) {
+            return "Dear User,\n\n"
+                 + "Based on recent air quality data in your area, there is an increased concentration of the following pollutants registered: "
+                 + String.join(", ", pollutants) + "."
+                 + "\n\nPlease take necessary precautions.\n\n"
+                 + "Stay healthy,\nAirAware Team";
+        }
 }

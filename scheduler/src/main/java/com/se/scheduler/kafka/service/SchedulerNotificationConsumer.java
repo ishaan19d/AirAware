@@ -26,8 +26,8 @@ public class SchedulerNotificationConsumer {
     /**
      * Receives user notifications from backend and schedules emails
      */
-    @KafkaListener(topics = "${kafka.topic.user-notifications}")
-    public void processNotification(Map<String, Object> notificationData) {
+    @KafkaListener(topics = "${kafka.topic.paid-user-notifications}")
+    public void processPaidUserNotification(Map<String, Object> notificationData) {
         try {
             String email = (String) notificationData.get("email");
             @SuppressWarnings("unchecked")
@@ -43,4 +43,23 @@ public class SchedulerNotificationConsumer {
             logger.error("Error scheduling email notification: {}", e.getMessage(), e);
         }
     }
+
+    @KafkaListener(topics = "${kafka.topic.free-user-notifications}")
+    public void processFreeUserNotification(Map<String, Object> notificationData) {
+        try {
+            String email = (String) notificationData.get("email");
+            @SuppressWarnings("unchecked")
+            List<String> unsafePollutants = (List<String>) notificationData.get("unsafePollutants");
+    
+            logger.info("Scheduling air quality alert for FREE user {}: {}", email, unsafePollutants);
+    
+            // Schedule the email alert for free user
+            emailSchedulerService.scheduleFreeUserEmailAlert(email, unsafePollutants);
+    
+            logger.info("Successfully scheduled air quality alert email for FREE user {}", email);
+        } catch (Exception e) {
+            logger.error("Error scheduling air quality alert for FREE user: {}", e.getMessage(), e);
+        }
+    }
+    
 }

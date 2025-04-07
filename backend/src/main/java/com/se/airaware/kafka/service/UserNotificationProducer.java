@@ -14,8 +14,11 @@ public class UserNotificationProducer {
 
     private static final Logger logger = LoggerFactory.getLogger(UserNotificationProducer.class);
 
-    @Value("${kafka.topic.user-notifications}")
-    private String userNotificationsTopic;
+    @Value("${kafka.topic.paid-user-notifications}")
+    private String paidUserNotificationsTopic;
+
+    @Value("${kafka.topic.free-user-notifications}")
+    private String freeUserNotificationsTopic;
 
     private final KafkaTemplate<String, Map<String, Object>> kafkaTemplate;
 
@@ -27,13 +30,24 @@ public class UserNotificationProducer {
     /**
      * Sends notification data to scheduler for email scheduling
      */
-    public void sendUserNotification(Map<String, Object> notificationData) {
+    public void sendPaidUserNotification(Map<String, Object> notificationData) {
         String email = (String) notificationData.get("email");
         
         logger.info("Sending notification data for {} to scheduler", email);
         
         // Use email as key for potential partitioning by user
-        kafkaTemplate.send(userNotificationsTopic, email, notificationData);
+        kafkaTemplate.send(paidUserNotificationsTopic, email, notificationData);
+        
+        logger.info("Notification data sent successfully");
+    }
+
+    public void sendFreeUserNotification(Map<String, Object> notificationData) {
+        String email = (String) notificationData.get("email");
+        
+        logger.info("Sending notification data for {} to scheduler to send to free users.", email);
+        
+        // Use email as key for potential partitioning by user
+        kafkaTemplate.send(freeUserNotificationsTopic, email, notificationData);
         
         logger.info("Notification data sent successfully");
     }
