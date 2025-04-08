@@ -55,6 +55,7 @@ const FreeUserDashboard = () => {
         { value: 'pm2_5', label: 'PM2.5' },
         { value: 'pm10', label: 'PM10' },
         { value: 'so2', label: 'Sulphur Dioxide (SO₂)' }
+        
     ];
 
     useEffect(() => {
@@ -97,7 +98,21 @@ const FreeUserDashboard = () => {
                 setUserData(null);
             }
         }
-
+        {showLogoutDialog && (
+            <div className="logout-dialog">
+                <div className="logout-dialog-content">
+                    <p>Are you sure you want to logout?</p>
+                    <div className="logout-dialog-buttons">
+                        <button className="confirm-button" onClick={confirmLogout}>
+                            Yes
+                        </button>
+                        <button className="cancel-button" onClick={cancelLogout}>
+                            No
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
         // Location detection code
         const detectLocation = async () => {
             if (!navigator.geolocation) {
@@ -383,8 +398,9 @@ const FreeUserDashboard = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userData');
+        // Clear localStorage and sessionStorage
+        localStorage.clear();
+        sessionStorage.clear();
         setShowLogoutDialog(true);
     };
 
@@ -538,7 +554,7 @@ const FreeUserDashboard = () => {
                 )}
             </div>
 
-            {showLogoutDialog && (
+                       {showLogoutDialog && (
                 <div className="logout-dialog">
                     <p>Are you sure you want to logout?</p>
                     <button className="confirm-button" onClick={confirmLogout}>Yes</button>

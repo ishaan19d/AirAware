@@ -666,9 +666,11 @@ const PremiumUserDashboard = () => {
   };
 
   const handleLogout = () => {
+    // Clear localStorage and sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
     setShowLogoutDialog(true);
-    setShowProfileMenu(false);
-  };
+};
 
   const confirmLogout = () => {
     localStorage.removeItem("authToken");
@@ -1064,20 +1066,20 @@ const PremiumUserDashboard = () => {
       </div>
 
       {showLogoutDialog && (
-        <div className="logout-dialog">
-          <div className="logout-dialog-content">
+    <div className="logout-dialog">
+        <div className="logout-dialog-content">
             <p>Are you sure you want to logout?</p>
             <div className="logout-dialog-buttons">
-              <button className="confirm-button" onClick={confirmLogout}>
-                Yes
-              </button>
-              <button className="cancel-button" onClick={cancelLogout}>
-                No
-              </button>
+                <button className="confirm-button" onClick={confirmLogout}>
+                    Yes
+                </button>
+                <button className="cancel-button" onClick={cancelLogout}>
+                    No
+                </button>
             </div>
-          </div>
         </div>
-      )}
+    </div>
+)}
     </div>
   );
 };
