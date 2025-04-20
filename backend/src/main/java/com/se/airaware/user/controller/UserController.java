@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,17 @@ import com.se.airaware.jwt.JwtService;
 import com.se.airaware.payload.response.ErrorResponse;
 import com.se.airaware.scheduler.email.service.EmailService;
 import com.se.airaware.scheduler.otp.service.OTPService;
+import com.se.airaware.user.Notification;
 import com.se.airaware.user.User;
 import com.se.airaware.user.UserDTO;
 import com.se.airaware.user.UserDataDTO;
+import com.se.airaware.user.repository.NotificationRepository;
 import com.se.airaware.user.service.UserService;
 
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api")
@@ -38,6 +43,9 @@ public class UserController {
 	private OTPService otpService;
 	private EmailService emailService;
 	private JwtService jwtService;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
 	public UserController(UserService userService, OTPService otpService, EmailService emailService, JwtService jwtService) {
 		super();
@@ -180,4 +188,28 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<?> getUserNotifications(@RequestHeader("Authorization") String tokenHeader) {
+        try {
+            // Extract JWT token from "Bearer <token>"
+            String token = tokenHeader.startsWith("Bearer ") ? tokenHeader.substring(7) : tokenHeader;
+
+            // Extract email from token using jwtService
+            String email = jwtService.extractUserName(token);
+
+            // Fetch notifications using email
+            List<Notification> notifications = notificationRepository.findByUserEmail(email);
+
+            return ResponseEntity.ok(notifications);
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid or expired token"
+            );
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+    }    
+
+    
 }

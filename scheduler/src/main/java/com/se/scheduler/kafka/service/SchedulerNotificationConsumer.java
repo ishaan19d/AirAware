@@ -61,5 +61,6 @@ public class SchedulerNotificationConsumer {
             logger.error("Error scheduling air quality alert for FREE user: {}", e.getMessage(), e);
         }
     }
+
     
 }

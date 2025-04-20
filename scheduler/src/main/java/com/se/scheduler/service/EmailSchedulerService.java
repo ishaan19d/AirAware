@@ -11,6 +11,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.se.scheduler.model.Notification;
+import com.se.scheduler.repository.NotificationRepository;
+
 @Service
 public class EmailSchedulerService {
 
@@ -20,6 +23,9 @@ public class EmailSchedulerService {
     
     @Value("${app.notification.sender}")
     private String senderEmail;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
     
     @Autowired
     public EmailSchedulerService(JavaMailSender mailSender) {
@@ -48,7 +54,16 @@ public class EmailSchedulerService {
             
             // Send email (in a real system, you'd schedule this)
             mailSender.send(message);
-            
+
+            Notification notificaton=notificationRepository.save(new Notification(
+                userEmail,
+                "PREMIUM",
+                subject,
+                content,
+                diseases
+            ));
+
+            System.out.println("Notification saved: " + notificaton);
             logger.info("Email alert sent to {}", userEmail);
         } catch (Exception e) {
             logger.error("Failed to schedule email for {}: {}", userEmail, e.getMessage(), e);
@@ -68,7 +83,16 @@ public class EmailSchedulerService {
             message.setText(content);
     
             mailSender.send(message);
-    
+
+            Notification notification=notificationRepository.save(new Notification(
+                userEmail,
+                "FREE",
+                subject,
+                content,
+                pollutants
+            ));
+            
+            System.out.println("Notification saved: " + notification);
             logger.info("Air quality alert email sent to FREE user {}", userEmail);
         } catch (Exception e) {
             logger.error("Failed to send air quality alert to FREE user {}: {}", userEmail, e.getMessage(), e);
