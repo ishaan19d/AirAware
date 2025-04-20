@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../../assets/logo.png';
-// import './LandingNav.css'; 
+import './Navbar.css';
 
 const LandingNav = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -13,7 +19,16 @@ const LandingNav = () => {
             AirAware
           </Link>
         </div>
-        <div className="nav-links">
+
+        <button className="menu-icon" onClick={toggleMenu}>
+          <div className={`hamburger ${menuOpen ? 'open' : ''}`}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </button>
+
+        <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <a href="#home" className="nav-link">Home</a>
           <a href="#about-us" className="nav-link">About Us</a>
           <a href="#subscriptions" className="nav-link">Subscriptions</a>

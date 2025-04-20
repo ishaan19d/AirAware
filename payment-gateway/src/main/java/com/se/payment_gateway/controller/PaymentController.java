@@ -24,12 +24,17 @@ public class PaymentController {
     }
 
     @PostMapping("/create-order")
-    public String createOrder(@RequestParam("amount") int amount) {
+    public ResponseEntity<String> createOrder(@RequestParam("amount") int amount) {
         try {
-            System.out.println("Amount=--------- "+amount);
-            return razorpayService.createOrder(amount);
+            System.out.println("Amount=--------- " + amount);
+            String orderId = razorpayService.createOrder(amount);
+            
+            // Return 200 OK with the order ID as string
+            return ResponseEntity.ok(orderId);
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            // Return error response with appropriate status code
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error: " + e.getMessage());
         }
     }
 
