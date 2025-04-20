@@ -5,7 +5,7 @@ class Command(BaseCommand):
     help = 'Run the Kafka consumer for ML processing'
 
     def handle(self, *args, **options):
-        from predictor.services.kafka_ml import MLConsumerProducer
+        from predictor.services.kafka_predict import MLConsumerProducer
         
         self.stdout.write('Starting ML service...')
         ml_service = MLConsumerProducer()

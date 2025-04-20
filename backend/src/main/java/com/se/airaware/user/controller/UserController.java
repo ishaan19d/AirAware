@@ -5,16 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,17 +21,11 @@ import com.se.airaware.jwt.JwtService;
 import com.se.airaware.payload.response.ErrorResponse;
 import com.se.airaware.scheduler.email.service.EmailService;
 import com.se.airaware.scheduler.otp.service.OTPService;
-import com.se.airaware.user.Notification;
 import com.se.airaware.user.User;
-import com.se.airaware.user.UserDTO;
-import com.se.airaware.user.UserDataDTO;
-import com.se.airaware.user.repository.NotificationRepository;
 import com.se.airaware.user.service.UserService;
 
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("/api")
@@ -44,9 +35,6 @@ public class UserController {
 	private EmailService emailService;
 	private JwtService jwtService;
 
-    @Autowired
-    NotificationRepository notificationRepository;
-
 	public UserController(UserService userService, OTPService otpService, EmailService emailService, JwtService jwtService) {
 		super();
 		this.userService = userService;
@@ -54,33 +42,6 @@ public class UserController {
 		this.emailService = emailService;
 		this.jwtService = jwtService;
 	}
-    
-    @PostMapping("/me")
-    public ResponseEntity<?> getUserDetails(@RequestHeader("Authorization") String tokenHeader) {
-        try {
-            // Extract token from header (expected format: "Bearer <token>")
-            String token = tokenHeader.startsWith("Bearer ") ? tokenHeader.substring(7) : tokenHeader;
-            // Extract email from token
-            String email = jwtService.extractUserName(token);
-            // Get user details by email
-            User user = userService.getUserByEmail(email);
-            UserDataDTO userDTO = new UserDataDTO();
-            userDTO.setId(user.getId());
-            userDTO.setName(user.getName());
-            userDTO.setEmail(user.getEmail());
-            userDTO.setPhoneNumber(user.getPhoneNumber());
-            userDTO.setLocation(user.getLocation());
-            userDTO.setDiseases(user.getDiseases());
-            userDTO.setPremiumUser(user.isPremiumUser());
-            return ResponseEntity.ok(userDTO);
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(
-                    HttpStatus.UNAUTHORIZED,
-                    "Invalid or expired token"
-            );
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
-    }
 	
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> request) {
@@ -88,6 +49,7 @@ public class UserController {
         String otp = otpService.generateOTP(email);
 
         try {
+        	
             emailService.sendOtpEmail(email, otp);
             return ResponseEntity.ok(Map.of("message", "OTP sent successfully"));
         } catch (MessagingException e) {
@@ -188,28 +150,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
-
-    @GetMapping("/notifications")
-    public ResponseEntity<?> getUserNotifications(@RequestHeader("Authorization") String tokenHeader) {
-        try {
-            // Extract JWT token from "Bearer <token>"
-            String token = tokenHeader.startsWith("Bearer ") ? tokenHeader.substring(7) : tokenHeader;
-
-            // Extract email from token using jwtService
-            String email = jwtService.extractUserName(token);
-
-            // Fetch notifications using email
-            List<Notification> notifications = notificationRepository.findByUserEmail(email);
-
-            return ResponseEntity.ok(notifications);
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(
-                    HttpStatus.UNAUTHORIZED,
-                    "Invalid or expired token"
-            );
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
-    }    
-
-    
 }

@@ -93,5 +93,9 @@ public class UserService {
 			throw new RuntimeException("User not found with email: " + email);
 		}
 	}
+
+	public User checkEmailValidity(String email){
+		return userRepository.findByEmail(email);
+	}
 }
 
