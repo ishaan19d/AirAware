@@ -84,5 +84,14 @@ public class UserService {
 			throw new RuntimeException("User not found with email: " + email);
 		}
     }
+
+	public User getUserByEmail(String email) {
+		User user = userRepository.findByEmail(email);
+		if (user != null) {
+			return user;
+		} else {
+			throw new RuntimeException("User not found with email: " + email);
+		}
+	}
 }
 

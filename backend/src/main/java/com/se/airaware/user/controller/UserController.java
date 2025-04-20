@@ -9,9 +9,11 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +24,8 @@ import com.se.airaware.payload.response.ErrorResponse;
 import com.se.airaware.scheduler.email.service.EmailService;
 import com.se.airaware.scheduler.otp.service.OTPService;
 import com.se.airaware.user.User;
+import com.se.airaware.user.UserDTO;
+import com.se.airaware.user.UserDataDTO;
 import com.se.airaware.user.service.UserService;
 
 import jakarta.mail.MessagingException;
@@ -42,6 +46,33 @@ public class UserController {
 		this.emailService = emailService;
 		this.jwtService = jwtService;
 	}
+    
+    @PostMapping("/me")
+    public ResponseEntity<?> getUserDetails(@RequestHeader("Authorization") String tokenHeader) {
+        try {
+            // Extract token from header (expected format: "Bearer <token>")
+            String token = tokenHeader.startsWith("Bearer ") ? tokenHeader.substring(7) : tokenHeader;
+            // Extract email from token
+            String email = jwtService.extractUserName(token);
+            // Get user details by email
+            User user = userService.getUserByEmail(email);
+            UserDataDTO userDTO = new UserDataDTO();
+            userDTO.setId(user.getId());
+            userDTO.setName(user.getName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setPhoneNumber(user.getPhoneNumber());
+            userDTO.setLocation(user.getLocation());
+            userDTO.setDiseases(user.getDiseases());
+            userDTO.setPremiumUser(user.isPremiumUser());
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid or expired token"
+            );
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+    }
 	
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> request) {
