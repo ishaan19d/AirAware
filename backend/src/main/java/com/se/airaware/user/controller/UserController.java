@@ -82,8 +82,19 @@ public class UserController {
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> request) {
         String email = request.get("email");
-        String otp = otpService.generateOTP(email);
 
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Email is required"));
+        }
+
+        User user = userService.checkEmailValidity(email);
+        if (user != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "Email already exists"));
+        }
+
+        String otp = otpService.generateOTP(email);
         try {
 
             emailService.sendOtpEmail(email, otp);
