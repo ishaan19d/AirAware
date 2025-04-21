@@ -1,47 +1,53 @@
-@import "tailwindcss";
-/* Default styles for larger screens */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-    font-size: 28px;
-    /* padding: 10px; */
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+@layer components {
+  .container {
+    @apply px-4 md:px-6 mx-auto max-w-7xl;
   }
   
-  /* Styles for screens 1440px and below */
-  @media (max-width: 1440px) {
-    body {
-      font-size: 15px;
-      /* padding: 18px; */
-    }
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors 
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50
+    disabled:pointer-events-none;
   }
   
-  /* Styles for screens 1220px and below */
-  @media (max-width: 1220px) {
-    body {
-      font-size: 14px;
-      /* padding: 16px; */
-    }
+  .btn-primary {
+    @apply bg-brand-600 text-white hover:bg-brand-700 focus-visible:ring-brand-500;
   }
   
-  /* Styles for screens 992px and below */
-  @media (max-width: 992px) {
-    body {
-      font-size: 13px;
-      /* padding: 14px; */
-    }
+  .btn-secondary {
+    @apply bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-50 dark:hover:bg-gray-600;
   }
   
-  /* Styles for screens 768px and below */
-  @media (max-width: 768px) {
-    body {
-      font-size: 12px;
-      /* padding: 12px; */
-    }
+  .btn-outline {
+    @apply border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800;
   }
   
-  /* Styles for screens 600px and below */
-  @media (max-width: 600px) {
-    body {
-      font-size: 11px;
-      /* padding: 10px; */
-    }
+  .input {
+    @apply flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm
+    focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+    dark:border-gray-600 dark:bg-gray-800 dark:text-gray-50;
   }
   
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden;
+  }
+}
