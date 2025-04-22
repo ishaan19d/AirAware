@@ -56,10 +56,10 @@ const pollutantInfo = {
     description: 'Carbon Monoxide',
     dangerLevel: 9, // EPA standard in ppm
     categories: {
-      'Good': [0, 1000],
-      'Fair': [1001, 2000],
-      'Poor': [2001, 10000],
-      'Severe': [10001, 15000]
+      'Good': [0, 250],
+      'Fair': [250, 1000],
+      'Poor': [1001, 2500],
+      'Severe': [2501, 5000]
     },
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

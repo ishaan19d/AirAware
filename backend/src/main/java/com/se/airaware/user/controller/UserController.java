@@ -1,6 +1,5 @@
 package com.se.airaware.user.controller;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/me")
+    @GetMapping("/me")
     public ResponseEntity<?> getUserDetails(@RequestHeader("Authorization") String tokenHeader) {
         try {
             // Extract token from header (expected format: "Bearer <token>")
@@ -69,7 +68,7 @@ public class UserController {
             userDTO.setPhoneNumber(user.getPhoneNumber());
             userDTO.setLocation(user.getLocation());
             userDTO.setDiseases(user.getDiseases());
-            userDTO.setPremiumUser(user.isPremiumUser());
+            userDTO.setIsPremiumUser(user.isPremiumUser());
             return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(
@@ -177,11 +176,13 @@ public class UserController {
     }
 
     @PatchMapping("/modify-disease")
-    public ResponseEntity<?> modifyDisease(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> modifyDisease(@RequestBody Map<String, Object> request) {
         try {
-            String email = request.get("email");
-            String[] diseasesArray = request.get("diseases").split(",");
-            List<String> diseases = Arrays.asList(diseasesArray);
+            String email = (String) request.get("email");
+
+            // Cast the diseases to a list
+            List<String> diseases = (List<String>) request.get("diseases");
+
             userService.modifyDiseases(email, diseases);
             return ResponseEntity.ok(Map.of("message", "Diseases added successfully"));
         } catch (Exception e) {
@@ -191,6 +192,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
 
     @GetMapping("/notifications")
     public ResponseEntity<?> getUserNotifications(@RequestHeader("Authorization") String tokenHeader) {
@@ -203,6 +205,10 @@ public class UserController {
 
             // Fetch notifications using email
             List<Notification> notifications = notificationRepository.findByUserEmail(email);
+            //i want latest 3 notifications to be sent only LocalDateTime was used
+            if (notifications.size() > 3) {
+                notifications = notifications.subList(notifications.size() - 3, notifications.size());
+            }
             return ResponseEntity.ok(notifications);
         } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(
@@ -211,5 +217,76 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
+    
+    @PatchMapping("/update-location")
+    public ResponseEntity<?> updateUserLocation(@RequestHeader("Authorization") String tokenHeader, @RequestBody Map<String, Object> request){
+    	try {
+            // Extract JWT token from "Bearer <token>"
+            String token = tokenHeader.startsWith("Bearer ") ? tokenHeader.substring(7) : tokenHeader;
+
+            // Extract email from token using jwtService
+            String email = jwtService.extractUserName(token);
+            
+            String city = (String) request.get("city");
+            String state = (String) request.get("state");
+            
+            userService.changeUserLocation(email, city, state);
+            
+            return ResponseEntity.ok(Map.of("message", "Location modified"));
+    		
+    	} catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid or expired token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    	}
+        
+    }
+    
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Email is required"));
+        }
+
+        User user = userService.checkEmailValidity(email);
+        
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Email does not exists"));
+        }
+
+        String otp = otpService.generateOTP(email);
+        try {
+            emailService.sendRecoveryEmail(email, otp);
+            return ResponseEntity.ok(Map.of("message", "OTP sent successfully"));
+        } catch (MessagingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to send OTP"));
+        }
+    }
+    
+    @PatchMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, Object> request){
+    	try {
+            String email = (String) request.get("email");
+            String newPassword = (String) request.get("password");
+            
+            userService.changePassword(email, newPassword);
+            return ResponseEntity.ok(Map.of("message", "Password Updated Successfully"));
+    		
+    	} catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid or expired token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    	}
+        
+    }
+    
+    
 
 }

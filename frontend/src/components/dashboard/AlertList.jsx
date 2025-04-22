@@ -33,7 +33,15 @@ const AlertList = ({ maxItems = 3 }) => {
 
         const data = await response.json()
         console.log('Fetched notifications:', data)
-        setAlerts(data)
+        
+        // Sort notifications by timestamp in descending order (newest first)
+        const sortedAlerts = data.sort((a, b) => {
+          const timeA = new Date(a.timestamp || 0).getTime();
+          const timeB = new Date(b.timestamp || 0).getTime();
+          return timeB - timeA; // Descending order (newest first)
+        });
+        
+        setAlerts(sortedAlerts)
         setError(null)
       } catch (err) {
         setError(err.message)

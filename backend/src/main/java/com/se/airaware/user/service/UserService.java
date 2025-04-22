@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.se.airaware.dto.AuthRequest;
 import com.se.airaware.jwt.JwtService;
 import com.se.airaware.user.User;
+import com.se.airaware.user.User.Location;
 import com.se.airaware.user.repository.UserRepository;
 
 import jakarta.validation.Valid;
@@ -96,6 +97,27 @@ public class UserService {
 
 	public User checkEmailValidity(String email){
 		return userRepository.findByEmail(email);
+	}
+	
+	public void changeUserLocation(String email, String city, String state) {
+		User user = userRepository.findByEmail(email);
+		if (user != null) {
+			Location location = new Location(city, state);
+			user.setLocation(location);
+			userRepository.save(user);
+		} else {
+			throw new RuntimeException("User not found with email: " + email);
+		}
+	}
+	
+	public void changePassword(String email, String newPassword) {
+		User user = userRepository.findByEmail(email);
+		if (user != null) {
+			user.setPassword(encoder.encode(newPassword));
+			userRepository.save(user);
+		} else {
+			throw new RuntimeException("User not found with email: " + email);
+		}
 	}
 }
 

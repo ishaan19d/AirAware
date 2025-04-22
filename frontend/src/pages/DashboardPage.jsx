@@ -187,29 +187,43 @@ const DashboardPage = () => {
   const [userDiseases, setUserDiseases] = useState([])
   
   // Map the disease names from JWT to match the keys in healthRecommendations
+    // ...existing code...
+  
+  // Map the disease names from JWT to match the keys in healthRecommendations
   const diseaseMapping = {
-    'Pulmonary fibrosis': 'Pulmonary Fibrosis',
-    'Sinusitis': 'Sinusitis',
-    'Asthma': 'Asthma',
-    'COPD': 'COPD',
-    'Bronchitis': 'Bronchitis',
-    'Emphysema': 'Emphysema',
-    'Pneumonia': 'Pneumonia',
-    'Lung Cancer': 'Lung Cancer',
-    'Allergic Rhinitis': 'Allergic Rhinitis',
-    'Respiratory Tract Infection': 'Respiratory Tract Infection',
-    'Cough and Throat Irritation': 'Cough and Throat Irritation',
-    'Tuberculosis': 'Tuberculosis',
-    'Obstructive Sleep Apnea': 'Obstructive Sleep Apnea'
+    'pulmonary fibrosis': 'Pulmonary Fibrosis',
+    'sinusitis': 'Sinusitis',
+    'asthma': 'Asthma',
+    'copd': 'COPD',
+    'bronchitis': 'Bronchitis',
+    'emphysema': 'Emphysema',
+    'pneumonia': 'Pneumonia',
+    'lung cancer': 'Lung Cancer',
+    'allergic rhinitis': 'Allergic Rhinitis',
+    'respiratory tract infection': 'Respiratory Tract Infection',
+    'cough and throat irritation': 'Cough and Throat Irritation',
+    'tuberculosis': 'Tuberculosis',
+    'obstructive sleep apnea': 'Obstructive Sleep Apnea'
   };
   
+  const userMeta = JSON.parse(localStorage.getItem('userMeta') || '{}')
   // Extract user's diseases from JWT and set default selected condition
   useEffect(() => {
-    if (user && user.diseases && user.diseases.length > 0) {
+    if (userMeta && userMeta.diseases && userMeta.diseases.length > 0) {
       // Map the diseases from JWT to match the keys in healthRecommendations
-      const mappedDiseases = user.diseases.map(disease => 
-        diseaseMapping[disease] || disease
-      ).filter(disease => healthRecommendations[disease]); // Only include diseases that have recommendations
+      // Use case-insensitive mapping to handle variations in disease names
+      const mappedDiseases = userMeta.diseases.map(disease => {
+        // Try to match with case-insensitive lookup
+        const lookupKey = disease.toLowerCase();
+        return diseaseMapping[lookupKey] || disease;
+      }).filter(disease => {
+        // Check if disease exists in healthRecommendations (case insensitive)
+        return Object.keys(healthRecommendations).some(key => 
+          key.toLowerCase() === disease.toLowerCase()
+        );
+      });
+      
+      console.log("Mapped diseases:", mappedDiseases);
       
       setUserDiseases(mappedDiseases);
       
@@ -217,7 +231,8 @@ const DashboardPage = () => {
       if (mappedDiseases.length > 0 && !selectedCondition) {
         setSelectedCondition(mappedDiseases[0]);
       } else if (mappedDiseases.length === 0) {
-        // Fallback to Asthma if no matching diseases
+        // If no matching diseases, include all diseases as available options
+        setUserDiseases(Object.keys(healthRecommendations));
         setSelectedCondition('Asthma');
       }
     } else {
@@ -518,7 +533,10 @@ const DashboardPage = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ diseases: selectedDiseases })
+        body: JSON.stringify({ 
+          email: userMeta.email,
+          diseases: selectedDiseases 
+        })
       })
       
       if (!updateResponse.ok) {

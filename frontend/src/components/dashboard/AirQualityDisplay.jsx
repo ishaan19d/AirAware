@@ -82,7 +82,6 @@ const AirQualityDisplay = ({ aqiData, isLoading }) => {
       
       <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
         <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
-          <span>Updated: {new Date(aqiData?.date).toLocaleTimeString()}</span>
           <span>{aqiData?.location?.name}</span>
         </div>
       </div>

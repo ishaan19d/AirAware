@@ -11,14 +11,14 @@ public class UserDataDTO {
     private String phoneNumber;
     private Location location;
     private List<String> diseases;
-    private Boolean premiumUser;
+    private Boolean isPremiumUser;
 
     public UserDataDTO() {
         super();
     }
 
     public UserDataDTO(String id, String name, String email, String phoneNumber, Location location, List<String> diseases,
-            Boolean premiumUser) {
+            Boolean isPremiumUser) {
         super();
         this.id = id;
         this.name = name;
@@ -26,7 +26,7 @@ public class UserDataDTO {
         this.phoneNumber = phoneNumber;
         this.location = location;
         this.diseases = diseases;
-        this.premiumUser = premiumUser;
+        this.isPremiumUser = isPremiumUser;
     }
     
     public String getId() {
@@ -65,17 +65,17 @@ public class UserDataDTO {
     public void setDiseases(List<String> diseases) {
         this.diseases = diseases;
     }
-    public Boolean getPremiumUser() {
-        return premiumUser;
+    public Boolean getIsPremiumUser() {
+        return isPremiumUser;
     }
-    public void setPremiumUser(Boolean premiumUser) {
-        this.premiumUser = premiumUser;
+    public void setIsPremiumUser(Boolean isPremiumUser) {
+        this.isPremiumUser = isPremiumUser;
     }
     
     @Override
     public String toString() {
         return "UserDataDTO [id=" + id + ", name=" + name + ", email=" + email + ", phoneNumber=" + phoneNumber
-                + ", location=" + location + ", diseases=" + diseases + ", premiumUser=" + premiumUser + "]";
+                + ", location=" + location + ", diseases=" + diseases + ", isPremiumUser=" + isPremiumUser + "]";
     }
     
 }

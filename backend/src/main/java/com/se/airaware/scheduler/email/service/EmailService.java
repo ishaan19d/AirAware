@@ -28,4 +28,19 @@ public class EmailService {
 
         mailSender.send(message);
     }
+    
+    public void sendRecoveryEmail(String to, String otp) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(to);
+        helper.setSubject("AirAware - Reset Password");	
+        helper.setText("UH OHhhhh!!!!\n\n" +
+                "Looks like you have forgotten you password\n\n" +
+                "Here is the OTP to recover you account: " + otp + "\n\n" +
+                "Stay informed, stay safe!\n\n" +
+                "Best Regards,\n" +
+                "The AirAware Team");
+
+        mailSender.send(message);
+    }
 }

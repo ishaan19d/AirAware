@@ -13,6 +13,8 @@ import com.se.air_data.entity.AirQualityData;
 import com.se.air_data.model.AQIResult;
 import com.se.air_data.model.AirQualityResponse;
 import com.se.air_data.model.Components;
+import com.se.air_data.model.GoogleAirQualityRequest;
+import com.se.air_data.model.GoogleAirQualityResponse;
 import com.se.air_data.repository.AirQualityRepository;
 
 @Service
@@ -29,6 +31,12 @@ public class AirQualityService {
 
     @Value("${openweather.api.key}")
     private String API_KEY;
+
+    @Value("${google.api.url.air}")
+    private String AQI_API_URL;
+
+    @Value("${google.api.key}")
+    private String AQI_API_KEY;
     
     @Autowired
     public AirQualityService(AirQualityRepository airQualityRepository, RestTemplate restTemplate) {
@@ -38,16 +46,48 @@ public class AirQualityService {
     }
     
     public AQIResult getAirQuality(double lat, double lon) {
-        String url = String.format("%s?lat=%f&lon=%f&appid=%s", API_URL, lat, lon, API_KEY);
-        AirQualityResponse response = restTemplate.getForObject(url, AirQualityResponse.class);
+        String url = String.format("%s?key=%s", AQI_API_URL, AQI_API_KEY);
         
-        if (response == null || response.getList().isEmpty()) {
-            throw new RuntimeException("Failed to fetch air quality data.");
+        // Create request body with LOCAL_AQI in extraComputations
+        GoogleAirQualityRequest request = new GoogleAirQualityRequest(lat, lon);
+        
+        // Make POST request to Google Air Quality API
+        GoogleAirQualityResponse response = restTemplate.postForObject(
+            url, 
+            request, 
+            GoogleAirQualityResponse.class);
+        
+        if (response == null || response.getIndexes() == null || response.getIndexes().isEmpty()) {
+            throw new RuntimeException("Failed to fetch air quality data from Google API.");
         }
 
-        Components components = response.getList().get(0).getComponents();
-        int aqi = AQICalculator.calculateAQI(components);
+        // Get AQI for ind_cpcb from response
+        int aqi = -1;
+        for (GoogleAirQualityResponse.Index index : response.getIndexes()) {
+            if ("ind_cpcb".equals(index.getCode())) {
+                aqi = index.getAqi();
+                System.out.println("Indian CPCB AQI: " + aqi);
+                break;
+            }
+        }
+        
+        // If ind_cpcb not found, use the universal AQI as fallback
+        if (aqi == -1) {
+            aqi = response.getIndexes().get(0).getAqi();
+            System.out.println("Universal AQI (fallback): " + aqi);
+        }
+        
+        // Still need to get components from OpenWeather for complete data
+        String openWeatherUrl = String.format("%s?lat=%f&lon=%f&appid=%s", API_URL, lat, lon, API_KEY);
+        AirQualityResponse openWeatherResponse = restTemplate.getForObject(openWeatherUrl, AirQualityResponse.class);
+        
+        if (openWeatherResponse == null || openWeatherResponse.getList().isEmpty()) {
+            throw new RuntimeException("Failed to fetch component data from OpenWeather API.");
+        }
 
+        Components components = openWeatherResponse.getList().get(0).getComponents();
+        
+        // Return result with Google AQI and OpenWeather components
         return new AQIResult(components, aqi);
     }
     
